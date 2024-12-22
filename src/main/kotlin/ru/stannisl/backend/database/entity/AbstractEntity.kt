@@ -1,4 +1,4 @@
-package ru.stannisl.backend.database
+package ru.stannisl.backend.database.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
