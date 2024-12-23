@@ -6,13 +6,13 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "`boards`")
-class Board(
+class BoardEntity(
     @Column(name = "title", nullable = false)
     var title: String,
 
     @OneToOne
     @JoinColumn(name = "owner_id", nullable = false)
-    var ownerId: User,
+    var ownerId: UserEntity,
 
     @Column(name = "last_modified_at", nullable = false)
     var lastModifiedAt: LocalDateTime = LocalDateTime.now()
