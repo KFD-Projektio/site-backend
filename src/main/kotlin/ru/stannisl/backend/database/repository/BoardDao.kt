@@ -1,6 +1,6 @@
 package ru.stannisl.backend.database.repository
 
 import org.springframework.data.repository.CrudRepository
-import ru.stannisl.backend.database.entity.Board
+import ru.stannisl.backend.database.entity.BoardEntity
 
-interface BoardDao : CrudRepository<Board, Long>
+interface BoardDao : CrudRepository<BoardEntity, Long>
