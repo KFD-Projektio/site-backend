@@ -1,7 +1,7 @@
 package ru.stannisl.backend.service
 
-import ru.stannisl.backend.models.requests.UserRequest
-import ru.stannisl.backend.models.response.UserResponse
+import ru.stannisl.backend.models.requests.user.UserRequest
+import ru.stannisl.backend.models.response.user.UserResponse
 
 interface UserService {
     fun getUserById(userId: Long): UserResponse?
