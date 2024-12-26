@@ -21,7 +21,7 @@ class SecurityConfig {
         return http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/users", "/ping").permitAll()
+                it.requestMatchers("/api/users", "/api/ping", "/ping", "/users").permitAll()
                 it.anyRequest().authenticated()
             }
             .build()

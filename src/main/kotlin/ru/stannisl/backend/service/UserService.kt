@@ -1,12 +1,12 @@
 package ru.stannisl.backend.service
 
-import ru.stannisl.backend.models.requests.user.UserRequest
-import ru.stannisl.backend.models.response.user.UserResponse
+import ru.stannisl.backend.models.requests.RegisterUserRequest
+import ru.stannisl.backend.models.response.RegisteredUserResponse
 
 interface UserService {
-    fun getUserById(userId: Long): UserResponse?
-    fun getAllUsers(): List<UserResponse>
-    fun createUser(user: UserRequest): UserResponse
-    fun updateUser(id: Long, user: UserRequest): UserResponse
+    fun getUserById(userId: Long): RegisteredUserResponse?
+    fun getAllUsers(): List<RegisteredUserResponse>
+    fun createUser(user: RegisterUserRequest): RegisteredUserResponse
+    fun updateUser(id: Long, user: RegisterUserRequest): RegisteredUserResponse
     fun deleteUserById(userId: Long)
 }

@@ -1,3 +1,6 @@
+# пока похуй пусть валяется тута
+
+
 spring:
     application:
         name: projektio-backend
@@ -12,7 +15,6 @@ spring:
         hibernate:
             ddl-auto: create
         show-sql: true
+
 server:
     port: 8083
-    servlet:
-        context-path: /api
