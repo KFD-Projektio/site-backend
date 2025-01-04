@@ -1,4 +1,4 @@
-package ru.stannisl.backend.models.response
+package ru.stannisl.backend.models.response.userResponse
 
 import java.time.LocalDateTime
 

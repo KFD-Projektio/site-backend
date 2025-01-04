@@ -5,9 +5,8 @@ import java.util.Date
 
 interface JwtTokenService {
     fun createToken(
-        user: UserEntity,
-        expirationDate: Date
+        user: UserEntity, expirationDate: Date
     ): String
 
-    fun validateToken(token: String): Boolean
+    fun validateToken(token: String, user: UserEntity): Boolean
 }

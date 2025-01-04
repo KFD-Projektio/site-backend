@@ -6,16 +6,11 @@ import org.springframework.stereotype.Service
 import ru.stannisl.backend.config.properties.JwtProperties
 import ru.stannisl.backend.database.entity.UserEntity
 import ru.stannisl.backend.database.repository.UserDao
-import ru.stannisl.backend.exceptionHandler.exceptions.CredentialsMismatchException
-import ru.stannisl.backend.exceptionHandler.exceptions.TableEntityNotFoundException
 import ru.stannisl.backend.mappers.UserMapper
-import ru.stannisl.backend.models.requests.AuthUserRequest
-import ru.stannisl.backend.models.requests.RegisterUserRequest
-import ru.stannisl.backend.models.response.AuthUserResponse
-import ru.stannisl.backend.models.response.RegisterUserResponse
+import ru.stannisl.backend.models.requests.user.RegisterUserRequest
+import ru.stannisl.backend.models.response.userResponse.RegisterUserResponse
 import ru.stannisl.backend.service.JwtTokenService
 import ru.stannisl.backend.service.UserService
-import java.util.*
 
 @Service
 class UserServiceImpl(
@@ -55,24 +50,4 @@ class UserServiceImpl(
     override fun deleteUserById(userId: Long) {
         TODO()
     }
-
-    override fun authorizeUser(authRequest: AuthUserRequest): AuthUserResponse {
-        println("${authRequest.login}, ${authRequest.password}")
-        val user = userDao.findUserByLogin(authRequest.login) ?: throw TableEntityNotFoundException("User not found")
-        // Добавить НОРМ проверку на несущ юзера (щас лень)
-
-        return if (passwordEncoder.matches(authRequest.password, user.passwordHash)) {
-            AuthUserResponse(
-                token = jwtTokenService.createToken(
-                    user = user,
-                    expirationDate = getAccessTokenExpirationDate()
-                )
-            )
-        } else {
-            throw CredentialsMismatchException("Password mismatch")
-        }
-    }
-
-    fun getAccessTokenExpirationDate(): Date =
-        Date(System.currentTimeMillis() + jwtProperties.accessTokenExpirationDate)
 }
