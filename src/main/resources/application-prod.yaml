@@ -1,3 +1,6 @@
+# пока похуй пусть валяется тута
+
+
 spring:
     application:
         name: projektio-backend
@@ -10,14 +13,8 @@ spring:
     jpa:
         database-platform: org.hibernate.dialect.H2Dialect
         hibernate:
-            ddl-auto: update
+            ddl-auto: create
         show-sql: true
+
 server:
     port: 8083
-    servlet:
-        context-path: /api
-
-jwt:
-    key: "top_secret_key_and_it_has_to_be_longer_than_256_bits" # Has to be from env var
-    access-token-expiration-date: 3600000
-    refresh-token-expiration-date: 86400000
