@@ -3,8 +3,8 @@ package ru.stannisl.backend.controllers.v1
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import ru.stannisl.backend.models.requests.RegisterUserRequest
-import ru.stannisl.backend.models.response.RegisterUserResponse
+import ru.stannisl.backend.models.requests.user.RegisterUserRequest
+import ru.stannisl.backend.models.response.userResponse.RegisterUserResponse
 import ru.stannisl.backend.service.UserService
 
 

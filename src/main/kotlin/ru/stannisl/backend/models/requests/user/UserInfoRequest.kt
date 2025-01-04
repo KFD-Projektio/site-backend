@@ -1,4 +1,4 @@
-package ru.stannisl.backend.models.requests
+package ru.stannisl.backend.models.requests.user
 
 data class UserInfoRequest (
     val id: Long,

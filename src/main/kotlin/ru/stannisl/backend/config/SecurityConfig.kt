@@ -13,7 +13,6 @@ import ru.stannisl.backend.config.properties.JwtProperties
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(JwtProperties::class) // Это возможно в отдельный класс сунуть
 class SecurityConfig {
     @Bean
     fun getEncoder(): PasswordEncoder {

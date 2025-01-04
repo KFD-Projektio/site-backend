@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import ru.stannisl.backend.exceptionHandler.exceptions.CredentialsMismatchException
 import ru.stannisl.backend.exceptionHandler.exceptions.TableEntityNotFoundException
-import ru.stannisl.backend.models.response.AuthUserResponse
 import ru.stannisl.backend.models.response.ErrorResponse
 
 @ControllerAdvice

@@ -1,5 +1,6 @@
 package ru.stannisl.backend.service.impl
 
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
@@ -23,7 +24,18 @@ class JwtTokenServiceImpl(
         Jwts.builder().claims().subject(user.login).issuedAt(Date(System.currentTimeMillis()))
             .expiration(expirationDate).and().signWith(secretKey).compact()
 
-    override fun validateToken(token: String): Boolean {
-        TODO("Not yet implemented")
+    override fun validateToken(token: String, user: UserEntity): Boolean {
+        val login = getLoginFromToken(token)
+
+        return login == user.login && !isTokenExpired(token)
     }
+
+    fun isTokenExpired(token: String): Boolean =
+        getAllClaimsFromToken(token).expiration.before(Date(System.currentTimeMillis()))
+
+    fun getLoginFromToken(token: String): String? = getAllClaimsFromToken(token).subject
+
+    private fun getAllClaimsFromToken(token: String): Claims =
+        Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload
+
 }

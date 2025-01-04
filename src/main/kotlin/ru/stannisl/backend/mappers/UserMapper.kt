@@ -2,7 +2,7 @@ package ru.stannisl.backend.mappers
 
 import org.springframework.stereotype.Component
 import ru.stannisl.backend.database.entity.UserEntity
-import ru.stannisl.backend.models.response.RegisterUserResponse
+import ru.stannisl.backend.models.response.userResponse.RegisterUserResponse
 
 @Component
 class UserMapper {
