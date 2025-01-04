@@ -2,12 +2,12 @@ package ru.stannisl.backend.mappers
 
 import org.springframework.stereotype.Component
 import ru.stannisl.backend.database.entity.UserEntity
-import ru.stannisl.backend.models.response.RegisteredUserResponse
+import ru.stannisl.backend.models.response.RegisterUserResponse
 
 @Component
 class UserMapper {
-    fun entityToResponse(entity: UserEntity): RegisteredUserResponse {
-        return RegisteredUserResponse(
+    fun entityToResponse(entity: UserEntity): RegisterUserResponse {
+        return RegisterUserResponse(
             id = entity.id,
             login = entity.login,
             email = entity.email,
