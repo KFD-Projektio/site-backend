@@ -12,22 +12,49 @@ import ru.projektio.backend.models.response.userResponse.RegisterUserResponse
 import ru.projektio.backend.service.JwtTokenService
 import ru.projektio.backend.service.UserService
 
+/**
+ * Реализация сервиса для работы с пользователями.
+ *
+ * @param userDao DAO для работы с пользователями.
+ * @param userMapper Маппер для преобразования сущностей пользователей.
+ * @param passwordEncoder Кодировщик паролей.
+ * @param jwtTokenService Сервис для работы с JWT-токенами.
+ * @param jwtProperties Свойства JWT.
+ */
 @Service
 class UserServiceImpl(
     private val userDao: UserDao,
-    private val userMapper: ru.projektio.backend.mappers.UserMapper,
+    private val userMapper: UserMapper,
     private val passwordEncoder: PasswordEncoder,
-    private val jwtTokenService: ru.projektio.backend.service.JwtTokenService,
+    private val jwtTokenService: JwtTokenService,
     private val jwtProperties: JwtProperties,
 ) : UserService {
-    override fun getUserById(userId: Long): RegisterUserResponse? =
-        userMapper.entityToResponse(userDao.findById(userId).orElseThrow { throw RuntimeException() })
 
+    /**
+     * Получает пользователя по его идентификатору.
+     *
+     * @param userId Идентификатор пользователя.
+     * @return Объект RegisterUserResponse, содержащий информацию о пользователе, или null, если пользователь не найден.
+     */
+    override fun getUserById(userId: Long): RegisterUserResponse? =
+        userMapper.entityToUserRegisterResponse(userDao.findById(userId).orElseThrow { throw RuntimeException() })
+
+    /**
+     * Получает список всех пользователей.
+     *
+     * @return Список объектов RegisterUserResponse, содержащих информацию о пользователях.
+     */
     override fun getAllUsers(): List<RegisterUserResponse> =
         userDao.findAll().map {
-            userMapper.entityToResponse(it)
+            userMapper.entityToUserRegisterResponse(it)
         }
 
+    /**
+     * Создает нового пользователя.
+     *
+     * @param user RegisterUserRequest Запрос на регистрацию пользователя.
+     * @return Объект RegisterUserResponse, содержащий информацию о созданном пользователе.
+     */
     @Transactional
     override fun createUser(user: RegisterUserRequest): RegisterUserResponse {
         val encodedPassword = passwordEncoder.encode(user.password)
@@ -40,13 +67,25 @@ class UserServiceImpl(
 
         userDao.save(currentUser)
 
-        return userMapper.entityToResponse(currentUser)
+        return userMapper.entityToUserRegisterResponse(currentUser)
     }
 
+    /**
+     * Обновляет информацию о пользователе.
+     *
+     * @param id Идентификатор пользователя.
+     * @param user Запрос на обновление пользователя.
+     * @return Объект RegisterUserResponse, содержащий информацию об обновленном пользователе.
+     */
     override fun updateUser(id: Long, user: RegisterUserRequest): RegisterUserResponse {
         TODO()
     }
 
+    /**
+     * Удаляет пользователя по его идентификатору.
+     *
+     * @param userId Идентификатор пользователя.
+     */
     override fun deleteUserById(userId: Long) {
         TODO()
     }

@@ -8,18 +8,34 @@ import ru.projektio.backend.exceptionHandler.exceptions.CredentialsMismatchExcep
 import ru.projektio.backend.exceptionHandler.exceptions.TableEntityNotFoundException
 import ru.projektio.backend.models.response.ErrorResponse
 
+/**
+ * Контроллер для обработки исключений, связанных с аутентификацией.
+ */
 @ControllerAdvice
 class AuthExceptionHandler {
 
-    @ExceptionHandler(ru.projektio.backend.exceptionHandler.exceptions.CredentialsMismatchException::class)
-    fun handleCredentialMismatch(e: ru.projektio.backend.exceptionHandler.exceptions.CredentialsMismatchException): ResponseEntity<ErrorResponse> =
+    /**
+     * Обрабатывает исключение CredentialsMismatchException.
+     *
+     * @param e Исключение CredentialsMismatchException.
+     * @return ResponseEntity с кодом состояния UNAUTHORIZED и телом ErrorResponse, содержащим сообщение об ошибке.
+     */
+    @ExceptionHandler(CredentialsMismatchException::class)
+    fun handleCredentialMismatch(e: CredentialsMismatchException): ResponseEntity<ErrorResponse> =
         ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ErrorResponse(e.message!!))
 
-    @ExceptionHandler(ru.projektio.backend.exceptionHandler.exceptions.TableEntityNotFoundException::class)
-    fun handleTableEntityNotFound(e: ru.projektio.backend.exceptionHandler.exceptions.TableEntityNotFoundException): ResponseEntity<ErrorResponse> =
+    /**
+     * Обрабатывает исключение TableEntityNotFoundException.
+     *
+     * @param e Исключение TableEntityNotFoundException.
+     * @return ResponseEntity с кодом состояния UNAUTHORIZED и телом ErrorResponse, содержащим сообщение об ошибке.
+     */
+    @ExceptionHandler(TableEntityNotFoundException::class)
+    fun handleTableEntityNotFound(e: TableEntityNotFoundException): ResponseEntity<ErrorResponse> =
         ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ErrorResponse(e.message!!))
 }
+

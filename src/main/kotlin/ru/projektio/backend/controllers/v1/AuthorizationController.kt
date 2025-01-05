@@ -9,17 +9,27 @@ import ru.projektio.backend.models.requests.user.AuthUserRequest
 import ru.projektio.backend.models.response.jwtTokenResponse.AuthTokensResponse
 import ru.projektio.backend.service.AuthService
 
+
+
+/**
+ * Контроллер для обработки запросов, связанных с авторизацией.
+ */
 @RestController
 @RequestMapping("/v1/auth")
 class AuthorizationController(
     private val authService: ru.projektio.backend.service.AuthService
 ) {
+    /**
+     * Конечная точка для входа пользователя.
+     *
+     * @param authRequestBody Тело запроса, содержащее учетные данные пользователя.
+     * @return ResponseEntity со статусом CREATED и телом, содержащим токены аутентификации.
+     */
     @RequestMapping("/login")
     fun login(@RequestBody authRequestBody: ru.projektio.backend.models.requests.user.AuthUserRequest): ResponseEntity<AuthTokensResponse> =
         ResponseEntity
             .status(HttpStatus.CREATED)
             .body(authService.authUser(authRequestBody))
-
 
 //    @RequestMapping("/refresh")
 //    fun refreshAccessToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): ResponseEntity<AuthTokensResponse> =

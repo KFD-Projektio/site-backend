@@ -4,16 +4,9 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import ru.projektio.backend.database.entity.UserEntity
 
-//interface UserDao : CrudRepository<UserEntity, Long> {
-//    fun findUserByLogin(login: String): UserEntity? = this.findAll().firstOrNull { it.login == login }
-//}
-
+/**
+ * Методы для работы с таблицей Базы данных users
+ */
 interface UserDao : CrudRepository<UserEntity, Long> {
-    fun findUserByLogin(login: String): UserEntity? {
-        val users = this.findAll()
-        println(users.forEach {
-            println(it)
-        })
-        return users.firstOrNull { it.login == login }
-    }
+    fun findUserByLogin(login: String): UserEntity? = this.findAll().firstOrNull { it.login == login }
 }
