@@ -13,7 +13,7 @@ class ColumnEntity(
 
     @OneToOne
     @JoinColumn(name = "board_id", nullable = false)
-    var boardId: ru.projektio.backend.database.entity.BoardEntity,
+    var boardId: BoardEntity,
 
     @Column(name = "position", nullable = false)
     var position: Int,

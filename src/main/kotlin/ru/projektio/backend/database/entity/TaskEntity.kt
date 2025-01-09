@@ -40,9 +40,9 @@ class TaskEntity(
     @JoinTable(
         name = "user_tasks",
         joinColumns = [JoinColumn(name = "task_id")],
-        inverseJoinColumns = [JoinColumn(name = "asignee_id")]
+        inverseJoinColumns = [JoinColumn(name = "assignee_id")]
         )
-    var asignees: MutableList<UserEntity> = mutableListOf()
+    var assignees: MutableList<UserEntity> = mutableListOf()
 
     @PreUpdate
     fun updateLastModified() {

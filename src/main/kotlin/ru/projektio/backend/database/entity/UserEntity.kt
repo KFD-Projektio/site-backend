@@ -1,6 +1,7 @@
 package ru.projektio.backend.database.entity
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "`users`")
@@ -13,12 +14,14 @@ class UserEntity(
 
     @Column(name = "login", nullable = false)
     var login: String,
+
 ) : AbstractEntity() {
-    @ManyToMany(targetEntity = ru.projektio.backend.database.entity.BoardEntity::class)
+    @ManyToMany(targetEntity = BoardEntity::class)
     @JoinTable(
         name = "user_boards",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "board_id")]
     )
-    var boards: MutableList<ru.projektio.backend.database.entity.BoardEntity> = mutableListOf()
+    var boards: MutableList<BoardEntity> = mutableListOf()
+
 }
