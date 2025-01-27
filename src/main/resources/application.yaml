@@ -1,0 +1,20 @@
+spring:
+    application:
+        name: projektio-backend
+    profiles:
+        active: dev
+
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+            ddl-auto: none
+        show-sql: false
+
+server:
+    port: 8083
+    servlet:
+        context-path: /
+
+jwt:
+    access-token-expiration-date: 3600000
+    refresh-token-expiration-date: 86400000

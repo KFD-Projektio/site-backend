@@ -1,14 +1,10 @@
 spring:
-    application:
-        name: projektio-backend
-
     datasource:
         url: jdbc:postgresql://localhost:5432/KFD
         username: user
         password: pass
         driver-class-name: org.postgresql.Driver
     jpa:
-        database-platform: org.hibernate.dialect.PostgreSQLDialect
         hibernate:
             ddl-auto: create
         show-sql: true
@@ -19,7 +15,4 @@ server:
         context-path: /api
 
 jwt:
-    key: "top_secret_key_and_it_has_to_be_longer_than_256_bits" # Has to be from env var
-    access-token-expiration-date: 3600000
-    refresh-token-expiration-date: 86400000
-
+    key: "top_secret_key_and_it_has_to_be_longer_than_256_bits"

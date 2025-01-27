@@ -1,3 +1,13 @@
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerInspectContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerKillContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerPullImage
+import com.github.dockerjava.api.command.InspectContainerResponse
+import com.github.dockerjava.api.exception.NotFoundException
+import org.gradle.api.Action
+
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
@@ -52,17 +62,18 @@ tasks.register("startDevPostgres") {
 	}
 }
 
-tasks.register<com.bmuschko.gradle.docker.tasks.image.DockerPullImage>("pullPostgresImage") {
+val dockerContainerName: String = "local-database-postgres"
+
+tasks.register<DockerPullImage>("pullPostgresImage") {
 	group = "docker"
 	image.set("postgres:latest")
 }
 
-
-tasks.register<com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer>("createPostgresContainer") {
+tasks.register<DockerCreateContainer>("createPostgresContainer") {
 	dependsOn("pullPostgresImage")
 	group = "docker"
 	imageId.set("postgres:latest")
-	containerName.set("local-postgres")
+	containerName.set(dockerContainerName)
 	envVars.set(mapOf(
 		"POSTGRES_DB" to "KFD",
 		"POSTGRES_USER" to "user",
@@ -71,10 +82,15 @@ tasks.register<com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer>
 	hostConfig.portBindings.set(listOf("5432:5432"))
 }
 
-tasks.register<com.bmuschko.gradle.docker.tasks.container.DockerStartContainer>("startPostgresContainer") {
+tasks.register<DockerStopContainer>("stopDockerContainer") {
+	group = "docker"
+	containerId.set(dockerContainerName)
+}
+
+tasks.register<DockerStartContainer>("startPostgresContainer") {
 	dependsOn("createPostgresContainer")
 	group = "docker"
-	containerId.set("local-postgres")
+	containerId.set(dockerContainerName)
 }
 
 tasks.register("startLocalPostgres") {
@@ -84,11 +100,19 @@ tasks.register("startLocalPostgres") {
 
 tasks.register("bootRunDev") {
 	group = "application"
-	dependsOn("startLocalPostgres")
+//	dependsOn("startLocalPostgres")
 	doLast {
 		exec {
-			commandLine("./gradlew", "bootRun", "-Dspring.profiles.active=dev")
+			commandLine("./gradlew", "bootRun", "-Dspring.profiles.active=dev", "--continue")
 		}
+	}
+}
+
+tasks.register("stopPostgresContainer") {
+	group = "docker"
+	dependsOn("stopDockerContainer")
+	doLast {
+		println("Stopped PostgreSQL container")
 	}
 }
 
@@ -99,4 +123,6 @@ tasks.register("bootRunProd") {
 			commandLine("./gradlew", "bootRun", "-Dspring.profiles.active=prod")
 		}
 	}
+	finalizedBy("stopPostgresContainer")
 }
+
