@@ -33,13 +33,32 @@ class SecurityConfig {
      * @param http Объект HttpSecurity для настройки безопасности.
      * @return Цепочка фильтров безопасности.
      */
+//    @Bean
+//    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+//        return http
+//            .csrf { it.disable() }
+//            .authorizeHttpRequests {
+//                it.anyRequest().permitAll() // Разрешает доступ ко всем остальным URL-адресам без аутентификации
+//            }
+//            .build() // Строит и возвращает цепочку фильтров безопасности
+//    }
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.anyRequest().permitAll() // Разрешает доступ ко всем остальным URL-адресам без аутентификации
+                it.requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Разрешает доступ к логину и регистрации всем
+                    .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN") // Доступ к эндпоинтам пользователя для USER и ADMIN
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Доступ к эндпоинтам администратора только для ADMIN
+                    .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
             }
-            .build() // Строит и возвращает цепочку фильтров безопасности
+            .formLogin { // Настройка формы логина (если используется)
+                it.loginPage("/api/auth/login") // Указываем страницу логина
+                    .permitAll() // Разрешаем доступ всем
+            }
+            .logout { // Настройка выхода из системы
+                it.permitAll() // Разрешаем доступ всем
+            }
+            .build()
     }
 }

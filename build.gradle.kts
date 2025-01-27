@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.4.0"
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("plugin.jpa") version "1.9.25"
+	id("com.bmuschko.docker-remote-api") version "9.4.0"
 }
 
 group = "ru.projektio"
@@ -31,8 +32,7 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.mockito:mockito-core:3.12.4")
 	testImplementation("org.springframework.security:spring-security-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	runtimeOnly("com.h2database:h2")
+	implementation("org.postgresql:postgresql:42.7.2")
 }
 
 allOpen {
@@ -43,4 +43,60 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.register("startDevPostgres") {
+	group = "docker"
+	doLast {
+		println("starting dev postgres")
+	}
+}
+
+tasks.register<com.bmuschko.gradle.docker.tasks.image.DockerPullImage>("pullPostgresImage") {
+	group = "docker"
+	image.set("postgres:latest")
+}
+
+
+tasks.register<com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer>("createPostgresContainer") {
+	dependsOn("pullPostgresImage")
+	group = "docker"
+	imageId.set("postgres:latest")
+	containerName.set("local-postgres")
+	envVars.set(mapOf(
+		"POSTGRES_DB" to "KFD",
+		"POSTGRES_USER" to "user",
+		"POSTGRES_PASSWORD" to "pass"
+	))
+	hostConfig.portBindings.set(listOf("5432:5432"))
+}
+
+tasks.register<com.bmuschko.gradle.docker.tasks.container.DockerStartContainer>("startPostgresContainer") {
+	dependsOn("createPostgresContainer")
+	group = "docker"
+	containerId.set("local-postgres")
+}
+
+tasks.register("startLocalPostgres") {
+	group = "docker"
+	dependsOn("startPostgresContainer")
+}
+
+tasks.register("bootRunDev") {
+	group = "application"
+	dependsOn("startLocalPostgres")
+	doLast {
+		exec {
+			commandLine("./gradlew", "bootRun", "-Dspring.profiles.active=dev")
+		}
+	}
+}
+
+tasks.register("bootRunProd") {
+	group = "application"
+	doLast {
+		exec {
+			commandLine("./gradlew", "bootRun", "-Dspring.profiles.active=prod")
+		}
+	}
 }

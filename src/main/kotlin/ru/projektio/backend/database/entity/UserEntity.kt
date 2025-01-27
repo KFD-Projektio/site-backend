@@ -24,4 +24,12 @@ class UserEntity(
     )
     var boards: MutableList<BoardEntity> = mutableListOf()
 
+    @ManyToMany(fetch = FetchType.EAGER) // Роли загружаются сразу с пользователем
+    @JoinTable(
+        name = "user_roles", // Название таблицы для связи
+        joinColumns = [JoinColumn(name = "user_id")], // Столбец для связи с UserEntity
+        inverseJoinColumns = [JoinColumn(name = "role_id")] // Столбец для связи с RoleEntity
+    )
+    var roles: MutableSet<UserRoleEntity> = mutableSetOf() // Используем Set, чтобы избежать дублика
+
 }

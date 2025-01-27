@@ -1,0 +1,25 @@
+spring:
+    application:
+        name: projektio-backend
+
+    datasource:
+        url: jdbc:postgresql://unable # Has to be from env var
+        username: user # Has to be from env var
+        password: pass # Has to be from env var
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+            ddl-auto: create
+        show-sql: true
+
+server:
+    port: 8083
+    servlet:
+        context-path: /api
+
+jwt:
+    key: "top_secret_key_and_it_has_to_be_longer_than_256_bits" # Has to be from env var
+    access-token-expiration-date: 3600000
+    refresh-token-expiration-date: 86400000
+
