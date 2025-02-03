@@ -17,9 +17,9 @@ class UserMapperTest {
         val email = "testEmail"
         val createdAt = LocalDateTime.now()
 
-        `when`(userEntity.id).thenReturn(id)
-        `when`(userEntity.login).thenReturn(login)
-        `when`(userEntity.email).thenReturn(email)
+        `when`(userEntity.id).thenReturn(1L)
+        `when`(userEntity.login).thenReturn("testLogin")
+        `when`(userEntity.email).thenReturn("testEmail")
         `when`(userEntity.createdAt).thenReturn(createdAt)
 
         val result = userMapper.entityToUserRegisterResponse(userEntity)

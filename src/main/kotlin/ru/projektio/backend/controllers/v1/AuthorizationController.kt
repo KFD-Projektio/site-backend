@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import ru.projektio.backend.models.requests.user.AuthUserRequest
 import ru.projektio.backend.models.response.jwtTokenResponse.AuthTokensResponse
-import ru.projektio.backend.service.AuthService
-
 
 
 /**
@@ -26,15 +24,9 @@ class AuthorizationController(
      * @return ResponseEntity со статусом CREATED и телом, содержащим токены аутентификации.
      */
     @RequestMapping("/login")
-    fun login(@RequestBody authRequestBody: ru.projektio.backend.models.requests.user.AuthUserRequest): ResponseEntity<AuthTokensResponse> =
+    fun login(@RequestBody authRequestBody: AuthUserRequest): ResponseEntity<AuthTokensResponse> =
         ResponseEntity
             .status(HttpStatus.CREATED)
             .body(authService.authUser(authRequestBody))
 
-//    @RequestMapping("/refresh")
-//    fun refreshAccessToken(@RequestBody refreshTokenRequest: RefreshTokenRequest): ResponseEntity<AuthTokensResponse> =
-//        ResponseEntity
-//            .status(HttpStatus.OK)
-//            .body(AuthTokensResponse("none", "none"))
-//
 }

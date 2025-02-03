@@ -3,6 +3,8 @@ package ru.projektio.backend.service.impl
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ru.projektio.backend.config.properties.JwtProperties
+import ru.projektio.backend.database.entity.RefreshToken
+import ru.projektio.backend.database.repository.RefreshTokenDao
 import ru.projektio.backend.database.repository.UserDao
 import ru.projektio.backend.exceptionHandler.exceptions.CredentialsMismatchException
 import ru.projektio.backend.exceptionHandler.exceptions.TableEntityNotFoundException
@@ -26,6 +28,7 @@ class AuthServiceImpl(
     private val jwtProperties: JwtProperties,
     private val passwordEncoder: PasswordEncoder,
     private val userDao: UserDao,
+    private val refreshTokenDao: RefreshTokenDao,
     private val jwtTokenService: JwtTokenService,
 ) : AuthService {
 
@@ -38,21 +41,32 @@ class AuthServiceImpl(
      * @throws CredentialsMismatchException Если пароль не совпадает.
      */
     override fun authUser(authRequest: AuthUserRequest): AuthTokensResponse {
-        println("${authRequest.login}, ${authRequest.password}")
+//        println("${authRequest.login}, ${authRequest.password}")
         val user = userDao.findUserByLogin(authRequest.login) ?: throw TableEntityNotFoundException(
             "User not found"
         )
 
-        return if (passwordEncoder.matches(authRequest.password, user.passwordHash)) {
-            AuthTokensResponse(
-                accessToken = jwtTokenService.createToken(
-                    user = user, expirationDate = getAccessTokenExpirationDate()
-                ),
-                refreshToken = "NONE" // TODO("Сделать отправку refresh tokena юзеру")
-            )
-        } else {
+        if (!passwordEncoder.matches(authRequest.password, user.passwordHash)) {
             throw CredentialsMismatchException("Password mismatch")
         }
+
+        refreshTokenDao.deleteByUserId(user)
+
+        val accessToken = jwtTokenService.createAccessToken(user)
+        val refreshToken = jwtTokenService.createRefreshToken(user)
+
+        refreshTokenDao.save(
+            RefreshToken(
+                token = refreshToken,
+                expiresAt = jwtTokenService.getRefreshTokenExpirationDate(),
+                userId = user
+            )
+        )
+
+        return AuthTokensResponse(
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
     }
 
     /**
@@ -65,11 +79,4 @@ class AuthServiceImpl(
     override fun refreshAccessToken(refreshTokenRequest: RefreshTokenRequest): AuthTokensResponse {
         TODO("Доделать эту штуку или свою всунуть/придумать")
     }
-    /**
-     * Возвращает дату истечения токена доступа.
-     *
-     * @return Дата истечения токена доступа.
-     */
-    fun getAccessTokenExpirationDate(): Date =
-        Date(System.currentTimeMillis() + jwtProperties.accessTokenExpirationDate)
 }

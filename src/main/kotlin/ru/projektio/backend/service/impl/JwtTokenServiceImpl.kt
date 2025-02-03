@@ -1,14 +1,14 @@
 package ru.projektio.backend.service.impl
 
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import ru.projektio.backend.config.properties.JwtProperties
 import ru.projektio.backend.database.entity.UserEntity
 import ru.projektio.backend.service.JwtTokenService
-import java.time.LocalDateTime
-import java.time.LocalTime
+
 import java.util.*
 
 /**
@@ -19,13 +19,25 @@ import java.util.*
 @Service
 class JwtTokenServiceImpl(
     private val jwtProperties: JwtProperties
-) : ru.projektio.backend.service.JwtTokenService {
+) : JwtTokenService {
 
     /**
      * Секретный ключ, используемый для подписи и проверки токенов.
      */
     private val secretKey = Keys.hmacShaKeyFor(
         jwtProperties.key.toByteArray()
+    )
+
+    override fun createAccessToken(user: UserEntity): String = createToken(
+        user,
+        getAccessTokenExpirationDate(),
+        mapOf("roles" to user.roles.map { it.name })
+    )
+
+    override fun createRefreshToken(user: UserEntity): String = createToken(
+        user,
+        getRefreshTokenExpirationDate(),
+        mapOf("roles" to user.roles.map { it.name })
     )
 
     /**
@@ -35,9 +47,14 @@ class JwtTokenServiceImpl(
      * @param expirationDate Дата истечения токена.
      * @return Строка, содержащая созданный JWT-токен.
      */
-    override fun createToken(user: UserEntity, expirationDate: Date): String =
-        Jwts.builder().claims().subject(user.login).issuedAt(Date(System.currentTimeMillis()))
-            .expiration(expirationDate).and().signWith(secretKey).compact()
+    private fun createToken(user: UserEntity, expirationDate: Date, claims: Map<String, Any> = mapOf()): String =
+        Jwts.builder()
+            .claims(claims)
+            .subject(user.login)
+            .issuedAt(Date(System.currentTimeMillis()))
+            .expiration(expirationDate)
+            .signWith(secretKey)
+            .compact()
 
     /**
      * Проверяет валидность JWT-токена для указанного пользователя.
@@ -58,8 +75,12 @@ class JwtTokenServiceImpl(
      * @param token JWT-токен, который нужно проверить.
      * @return true, если токен истек, иначе false.
      */
-    fun isTokenExpired(token: String): Boolean =
+    fun isTokenExpired(token: String): Boolean = try {
         getAllClaimsFromToken(token).expiration.before(Date(System.currentTimeMillis()))
+        false
+    } catch (e: ExpiredJwtException) {
+        true
+    }
 
     /**
      * Возвращает логин пользователя из указанного JWT-токена.
@@ -78,4 +99,9 @@ class JwtTokenServiceImpl(
     private fun getAllClaimsFromToken(token: String): Claims =
         Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload
 
+    fun getAccessTokenExpirationDate() =
+        Date(System.currentTimeMillis() + jwtProperties.accessTokenExpirationDate)
+
+    fun getRefreshTokenExpirationDate() =
+        Date(System.currentTimeMillis() + jwtProperties.refreshTokenExpirationDate)
 }

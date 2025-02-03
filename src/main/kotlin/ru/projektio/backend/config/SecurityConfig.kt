@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -33,32 +34,19 @@ class SecurityConfig {
      * @param http Объект HttpSecurity для настройки безопасности.
      * @return Цепочка фильтров безопасности.
      */
-//    @Bean
-//    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-//        return http
-//            .csrf { it.disable() }
-//            .authorizeHttpRequests {
-//                it.anyRequest().permitAll() // Разрешает доступ ко всем остальным URL-адресам без аутентификации
-//            }
-//            .build() // Строит и возвращает цепочку фильтров безопасности
-//    }
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http
+        http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Разрешает доступ к логину и регистрации всем
-                    .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN") // Доступ к эндпоинтам пользователя для USER и ADMIN
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Доступ к эндпоинтам администратора только для ADMIN
-                    .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                it.requestMatchers("/api/auth/login", "/api/auth/refresh").permitAll()
+                    .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                    .anyRequest().authenticated()
             }
-            .formLogin { // Настройка формы логина (если используется)
-                it.loginPage("/api/auth/login") // Указываем страницу логина
-                    .permitAll() // Разрешаем доступ всем
+            .sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-            .logout { // Настройка выхода из системы
-                it.permitAll() // Разрешаем доступ всем
-            }
-            .build()
+//            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+        return http.build()
     }
 }
