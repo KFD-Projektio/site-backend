@@ -38,6 +38,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.mockito:mockito-core:3.12.4")
@@ -87,8 +88,13 @@ tasks.register<DockerStopContainer>("stopDockerContainer") {
 	containerId.set(dockerContainerName)
 }
 
-tasks.register<DockerStartContainer>("startPostgresContainer") {
+tasks.register<DockerStartContainer>("Build And Run Container") {
 	dependsOn("createPostgresContainer")
+	group = "docker"
+	containerId.set(dockerContainerName)
+}
+
+tasks.register<DockerStartContainer>("Run Builded Container") {
 	group = "docker"
 	containerId.set(dockerContainerName)
 }

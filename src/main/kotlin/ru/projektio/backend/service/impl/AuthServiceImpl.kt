@@ -6,6 +6,8 @@ import ru.projektio.backend.config.properties.JwtProperties
 import ru.projektio.backend.database.entity.RefreshToken
 import ru.projektio.backend.database.repository.RefreshTokenDao
 import ru.projektio.backend.database.repository.UserDao
+import ru.projektio.backend.exceptionHandler.exceptions.TokenExpiredException
+import ru.projektio.backend.exceptionHandler.exceptions.InvalidTokenException
 import ru.projektio.backend.exceptionHandler.exceptions.CredentialsMismatchException
 import ru.projektio.backend.exceptionHandler.exceptions.TableEntityNotFoundException
 import ru.projektio.backend.models.requests.jwtTokenRequests.RefreshTokenRequest
@@ -26,8 +28,8 @@ import java.util.*
 @Service
 class AuthServiceImpl(
     private val jwtProperties: JwtProperties,
-    private val passwordEncoder: PasswordEncoder,
     private val userDao: UserDao,
+    private val passwordEncoder: PasswordEncoder,
     private val refreshTokenDao: RefreshTokenDao,
     private val jwtTokenService: JwtTokenService,
 ) : AuthService {
@@ -41,14 +43,13 @@ class AuthServiceImpl(
      * @throws CredentialsMismatchException Если пароль не совпадает.
      */
     override fun authUser(authRequest: AuthUserRequest): AuthTokensResponse {
-//        println("${authRequest.login}, ${authRequest.password}")
         val user = userDao.findUserByLogin(authRequest.login) ?: throw TableEntityNotFoundException(
             "User not found"
         )
 
-        if (!passwordEncoder.matches(authRequest.password, user.passwordHash)) {
+        if (!passwordEncoder.matches(authRequest.password, user.passwordHash))
             throw CredentialsMismatchException("Password mismatch")
-        }
+
 
         refreshTokenDao.deleteByUserId(user)
 
@@ -77,6 +78,29 @@ class AuthServiceImpl(
      * @throws NotImplementedError Если функция не реализована.
      */
     override fun refreshAccessToken(refreshTokenRequest: RefreshTokenRequest): AuthTokensResponse {
-        TODO("Доделать эту штуку или свою всунуть/придумать")
+        val refreshToken = refreshTokenDao.findByToken(refreshTokenRequest.refreshToken)
+            ?: throw InvalidTokenException("Invalid refresh token")
+
+        if (refreshToken.expiresAt.before(Date())) {
+            refreshTokenDao.delete(refreshToken)
+            throw TokenExpiredException("Refresh token expired")
+        }
+
+        val user = refreshToken.userId
+        refreshTokenDao.delete(refreshToken)
+
+        val newAccessToken = jwtTokenService.createAccessToken(user)
+        val newRefreshToken = jwtTokenService.createRefreshToken(user)
+
+        refreshTokenDao.save(RefreshToken(
+            token = newRefreshToken,
+            expiresAt = jwtTokenService.getRefreshTokenExpirationDate(),
+            userId = user
+        ))
+
+        return AuthTokensResponse(
+            accessToken = newAccessToken,
+            refreshToken = newRefreshToken
+        )
     }
 }
