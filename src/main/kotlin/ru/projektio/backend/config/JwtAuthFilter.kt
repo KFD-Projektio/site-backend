@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import ru.projektio.backend.database.repository.UserDao
@@ -26,16 +27,14 @@ class JwtAuthFilter(
         }
 
         val jwt = authHeader.substring(7)
-        if (jwtTokenService.validateToken(jwt)) {
-            val username = jwtTokenService.getUsernameFromToken(jwt)
-            val user = userDao.findUserByLogin(username)!!
-            val auth = UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                user.roles.map { SimpleGrantedAuthority("ROLE_${it.name}") }
-            )
-            SecurityContextHolder.getContext().authentication = auth
-        }
+        val username = jwtTokenService.getLoginFromToken(jwt)
+        val user = userDao.findUserByLogin(username!!)
+        val auth = UsernamePasswordAuthenticationToken(
+            user,
+            null,
+        )
+        SecurityContextHolder.getContext().authentication = auth
+
 
         filterChain.doFilter(request, response)
     }
