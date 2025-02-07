@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import ru.projektio.backend.config.properties.JwtProperties
 
 /**
@@ -17,7 +18,9 @@ import ru.projektio.backend.config.properties.JwtProperties
  */
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val jwtAuthFilter: JwtAuthFilter,
+) {
     /**
      * Создает экземпляр PasswordEncoder для кодирования паролей.
      *
@@ -39,14 +42,13 @@ class SecurityConfig {
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/auth/login", "/api/auth/refresh").permitAll()
-                    .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                it.requestMatchers("/v1/auth/login", "/v1/auth/refresh", "/v1/ping", "/v1/auth/register").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-//            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 }

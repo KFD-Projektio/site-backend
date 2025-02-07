@@ -88,7 +88,7 @@ class JwtTokenServiceImpl(
      * @param token JWT-токен, из которого нужно извлечь логин.
      * @return Логин пользователя или null, если токен недействителен.
      */
-    fun getLoginFromToken(token: String): String? = getAllClaimsFromToken(token).subject
+    override fun getLoginFromToken(token: String): String? = getAllClaimsFromToken(token).subject
 
     /**
      * Возвращает все утверждения (claims) из указанного JWT-токена.
@@ -99,9 +99,9 @@ class JwtTokenServiceImpl(
     private fun getAllClaimsFromToken(token: String): Claims =
         Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).payload
 
-    fun getAccessTokenExpirationDate() =
+    override fun getAccessTokenExpirationDate() =
         Date(System.currentTimeMillis() + jwtProperties.accessTokenExpirationDate)
 
-    fun getRefreshTokenExpirationDate() =
+    override fun getRefreshTokenExpirationDate() =
         Date(System.currentTimeMillis() + jwtProperties.refreshTokenExpirationDate)
 }

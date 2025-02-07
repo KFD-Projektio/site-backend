@@ -12,6 +12,7 @@ interface JwtTokenService {
     fun createAccessToken(user: UserEntity): String
     fun createRefreshToken(user: UserEntity): String
     fun getRefreshTokenExpirationDate() : Date
+    fun getLoginFromToken(token: String): String?
 
     /**
      * Возвращает дату истечения токена доступа.

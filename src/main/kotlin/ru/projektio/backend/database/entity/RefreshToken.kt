@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import java.util.Date
 
 @Entity
+@Table(name = "refresh_tokens")
 class RefreshToken(
     @Column(unique = true, nullable = false)
     val token: String,
