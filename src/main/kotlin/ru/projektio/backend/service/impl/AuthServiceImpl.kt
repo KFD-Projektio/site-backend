@@ -94,11 +94,13 @@ class AuthServiceImpl(
         val newAccessToken = jwtTokenService.createAccessToken(user)
         val newRefreshToken = jwtTokenService.createRefreshToken(user)
 
-        refreshTokenDao.save(RefreshToken(
-            token = newRefreshToken,
-            expiresAt = jwtTokenService.getRefreshTokenExpirationDate(),
-            userId = user
-        ))
+        refreshTokenDao.save(
+            RefreshToken(
+                token = newRefreshToken,
+                expiresAt = jwtTokenService.getRefreshTokenExpirationDate(),
+                userId = user
+            )
+        )
 
         return AuthTokensResponse(
             accessToken = newAccessToken,

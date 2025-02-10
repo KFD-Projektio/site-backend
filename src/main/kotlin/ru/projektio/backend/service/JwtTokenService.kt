@@ -10,7 +10,7 @@ interface JwtTokenService {
     fun validateToken(token: String, user: UserEntity): Boolean
     fun createAccessToken(user: UserEntity): String
     fun createRefreshToken(user: UserEntity): String
-    fun getRefreshTokenExpirationDate() : Date
+    fun getRefreshTokenExpirationDate(): Date
     fun getLoginFromToken(token: String): String?
-    fun getAccessTokenExpirationDate() : Date
+    fun getAccessTokenExpirationDate(): Date
 }

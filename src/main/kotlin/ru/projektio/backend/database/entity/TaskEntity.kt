@@ -41,7 +41,7 @@ class TaskEntity(
         name = "user_tasks",
         joinColumns = [JoinColumn(name = "task_id")],
         inverseJoinColumns = [JoinColumn(name = "assignee_id")]
-        )
+    )
     var assignees: MutableList<UserEntity> = mutableListOf()
 
     @PreUpdate

@@ -1,7 +1,6 @@
 package ru.projektio.backend.database.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "`tags`")
@@ -16,7 +15,7 @@ class TagsEntity(
     @JoinColumn(name = "board_id", nullable = false)
     var boardId: BoardEntity,
 
-) : AbstractEntity() {
+    ) : AbstractEntity() {
     @ManyToMany(targetEntity = TaskEntity::class)
     @JoinTable(
         name = "task_tags",

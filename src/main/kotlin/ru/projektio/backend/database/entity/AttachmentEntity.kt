@@ -19,7 +19,7 @@ class AttachmentEntity(
     @OneToOne
     @JoinColumn(name = "uploader_id")
     var uploadedId: UserEntity,
-): AbstractEntity() {
+) : AbstractEntity() {
     @Column(name = "uploaded_at", nullable = false)
     var uploadedAt: LocalDateTime = LocalDateTime.now()
 

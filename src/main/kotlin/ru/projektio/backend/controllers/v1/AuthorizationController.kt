@@ -38,8 +38,8 @@ class AuthorizationController(
             .body(authService.authUser(authRequestBody))
 
     @PostMapping("/refresh")
-    fun refreshToken(@RequestBody request: RefreshTokenRequest): ResponseEntity<AuthTokensResponse>
-        = ResponseEntity.ok(authService.refreshAccessToken(request))
+    fun refreshToken(@RequestBody request: RefreshTokenRequest): ResponseEntity<AuthTokensResponse> =
+        ResponseEntity.ok(authService.refreshAccessToken(request))
 
     @PostMapping("/register")
     fun register(@RequestBody request: RegisterUserRequest): ResponseEntity<RegisterUserResponse> =

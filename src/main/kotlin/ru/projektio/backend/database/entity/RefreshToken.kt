@@ -1,7 +1,7 @@
 package ru.projektio.backend.database.entity
 
 import jakarta.persistence.*
-import java.util.Date
+import java.util.*
 
 @Entity
 @Table(name = "refresh_tokens")
@@ -13,6 +13,6 @@ class RefreshToken(
     val expiresAt: Date,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id" ,nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     val userId: UserEntity
 ) : AbstractEntity()

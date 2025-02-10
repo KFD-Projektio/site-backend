@@ -12,5 +12,5 @@ abstract class AbstractEntity {
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
-    val createdAt : LocalDateTime = LocalDateTime.now()
+    val createdAt: LocalDateTime = LocalDateTime.now()
 }

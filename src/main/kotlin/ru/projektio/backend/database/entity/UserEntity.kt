@@ -1,7 +1,6 @@
 package ru.projektio.backend.database.entity
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "`users`")
@@ -15,7 +14,7 @@ class UserEntity(
     @Column(name = "login", nullable = false)
     var login: String,
 
-) : AbstractEntity() {
+    ) : AbstractEntity() {
     @ManyToMany(targetEntity = BoardEntity::class)
     @JoinTable(
         name = "user_boards",

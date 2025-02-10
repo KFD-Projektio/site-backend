@@ -24,7 +24,10 @@ class BoardServiceImpl(
 
     override fun createBoard(boardCreationRequest: BoardCreationRequest): BoardResponse {
 
-        val boardEntity = BoardEntity(boardCreationRequest.title, securityService.getAuthenticatedUserFromContext()).apply { description = boardCreationRequest.description }
+        val boardEntity = BoardEntity(
+            boardCreationRequest.title,
+            securityService.getAuthenticatedUserFromContext()
+        ).apply { description = boardCreationRequest.description }
         boardDao.save(boardEntity)
 
         return boardMapper.entityToResponse(boardEntity)
