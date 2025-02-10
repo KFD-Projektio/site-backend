@@ -1,8 +1,8 @@
-package ru.projektio.backend.models.response
+package ru.projektio.backend.models.response.board
 
 import java.time.LocalDateTime
 
-data class BoardInfoResponse(
+data class BoardResponse(
     val id: Long,
     val title: String,
     val ownerId: Long,

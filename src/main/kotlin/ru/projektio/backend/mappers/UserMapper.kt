@@ -2,25 +2,19 @@ package ru.projektio.backend.mappers
 
 import org.springframework.stereotype.Component
 import ru.projektio.backend.database.entity.UserEntity
-import ru.projektio.backend.models.response.userResponse.RegisterUserResponse
+import ru.projektio.backend.models.response.user.RegisterUserResponse
 
 /**
  * Компонент для преобразования сущностей пользователей в DTO.
  */
 @Component
-class UserMapper {
-    /**
-     * Преобразует сущность пользователя в объект ответа RegisterUserResponse.
-     *
-     * @param entity Сущность пользователя, которую нужно преобразовать.
-     * @return Объект RegisterUserResponse, содержащий информацию о пользователе.
-     */
-    fun entityToUserRegisterResponse(entity: UserEntity): RegisterUserResponse {
+class UserMapper : AbstractMapper<UserEntity, RegisterUserResponse> {
+    override fun entityToResponse(entity: UserEntity): RegisterUserResponse {
         return RegisterUserResponse(
             id = entity.id,
             login = entity.login,
             email = entity.email,
-            createdAt = entity.createdAt,
+            createdAt = entity.createdAt
         )
     }
 }

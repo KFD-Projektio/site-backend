@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service
 import ru.projektio.backend.config.properties.JwtProperties
 import ru.projektio.backend.database.entity.UserEntity
 import ru.projektio.backend.database.repository.UserDao
+import ru.projektio.backend.exceptionHandler.exceptions.NotUniqueRegisterDataException
 import ru.projektio.backend.mappers.UserMapper
 import ru.projektio.backend.models.requests.user.RegisterUserRequest
-import ru.projektio.backend.models.response.userResponse.RegisterUserResponse
+import ru.projektio.backend.models.response.user.RegisterUserResponse
 import ru.projektio.backend.service.JwtTokenService
 import ru.projektio.backend.service.UserService
 
@@ -37,7 +38,7 @@ class UserServiceImpl(
      * @return Объект RegisterUserResponse, содержащий информацию о пользователе, или null, если пользователь не найден.
      */
     override fun getUserById(userId: Long): RegisterUserResponse? =
-        userMapper.entityToUserRegisterResponse(userDao.findById(userId).orElseThrow { throw RuntimeException() })
+        userMapper.entityToResponse(userDao.findById(userId).orElseThrow { throw RuntimeException() })
 
     /**
      * Получает список всех пользователей.
@@ -46,7 +47,7 @@ class UserServiceImpl(
      */
     override fun getAllUsers(): List<RegisterUserResponse> =
         userDao.findAll().map {
-            userMapper.entityToUserRegisterResponse(it)
+            userMapper.entityToResponse(it)
         }
 
     /**
@@ -57,9 +58,16 @@ class UserServiceImpl(
      */
     @Transactional
     override fun createUser(user: RegisterUserRequest): RegisterUserResponse {
-        val encodedPassword = passwordEncoder.encode(user.password)
 
-        val currentUser: UserEntity = UserEntity(
+        if (userDao.findUserByLogin(user.login) != null) {
+            throw NotUniqueRegisterDataException("Login already exists")
+        }
+        if (userDao.findUserByEmail(user.email) != null) {
+            throw NotUniqueRegisterDataException("Email already exists")
+        }
+
+        val encodedPassword = passwordEncoder.encode(user.password)
+        val currentUser = UserEntity(
             login = user.login,
             email = user.email,
             passwordHash = encodedPassword,
@@ -67,7 +75,7 @@ class UserServiceImpl(
 
         userDao.save(currentUser)
 
-        return userMapper.entityToUserRegisterResponse(currentUser)
+        return userMapper.entityToResponse(currentUser)
     }
 
     /**

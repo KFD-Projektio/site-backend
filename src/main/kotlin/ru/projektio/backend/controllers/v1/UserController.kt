@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import ru.projektio.backend.models.requests.user.RegisterUserRequest
-import ru.projektio.backend.models.response.userResponse.RegisterUserResponse
+import ru.projektio.backend.models.response.user.RegisterUserResponse
 import ru.projektio.backend.service.UserService
 
 
@@ -50,7 +50,7 @@ class UserController(
     @PostMapping
     fun create(@RequestBody request: RegisterUserRequest): ResponseEntity<RegisterUserResponse> =
         ResponseEntity
-            .status(HttpStatus.OK)
+            .status(HttpStatus.CREATED)
             .body(userService.createUser(request))
 }
 

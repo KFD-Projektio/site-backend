@@ -22,7 +22,7 @@ class UserMapperTest {
         `when`(userEntity.email).thenReturn("testEmail")
         `when`(userEntity.createdAt).thenReturn(createdAt)
 
-        val result = userMapper.entityToUserRegisterResponse(userEntity)
+        val result = userMapper.entityToResponse(userEntity)
 
         assertEquals(id, result.id)
         assertEquals(login, result.login)

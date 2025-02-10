@@ -18,5 +18,5 @@ class PingCheckController {
      * @return ResponseEntity со статусом OK и телом, содержащим карту с ключом "status" и значением "ok".
      */
     @GetMapping
-    fun ping(): ResponseEntity<Pair<String, String>> = ResponseEntity.status(HttpStatus.OK).body("status" to "ok")
+    fun ping(): ResponseEntity<Map<String, String>> = ResponseEntity.status(HttpStatus.OK).body(mapOf("status" to "ok"))
 }

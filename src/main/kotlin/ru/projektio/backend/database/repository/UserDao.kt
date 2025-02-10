@@ -9,4 +9,5 @@ import ru.projektio.backend.database.entity.UserEntity
  */
 interface UserDao : CrudRepository<UserEntity, Long> {
     fun findUserByLogin(login: String): UserEntity? = this.findAll().firstOrNull { it.login == login }
+    fun findUserByEmail(email: String): UserEntity? = this.findAll().firstOrNull { it.email == email }
 }

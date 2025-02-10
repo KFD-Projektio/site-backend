@@ -1,4 +1,4 @@
-package ru.projektio.backend.models.response.userResponse
+package ru.projektio.backend.models.response.user
 
 import java.time.LocalDateTime
 

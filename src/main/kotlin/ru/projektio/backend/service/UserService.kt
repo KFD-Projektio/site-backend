@@ -1,7 +1,7 @@
 package ru.projektio.backend.service
 
 import ru.projektio.backend.models.requests.user.RegisterUserRequest
-import ru.projektio.backend.models.response.userResponse.RegisterUserResponse
+import ru.projektio.backend.models.response.user.RegisterUserResponse
 
 
 /**
@@ -10,7 +10,7 @@ import ru.projektio.backend.models.response.userResponse.RegisterUserResponse
 interface UserService {
     fun getUserById(userId: Long): RegisterUserResponse?
     fun getAllUsers(): List<RegisterUserResponse>
-    fun     createUser(user: RegisterUserRequest): RegisterUserResponse
+    fun createUser(user: RegisterUserRequest): RegisterUserResponse
     fun updateUser(id: Long, user: RegisterUserRequest): RegisterUserResponse
     fun deleteUserById(userId: Long)
 }

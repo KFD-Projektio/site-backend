@@ -2,17 +2,18 @@ package ru.projektio.backend.service.impl
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.projektio.backend.config.properties.JwtProperties
 import ru.projektio.backend.database.entity.RefreshToken
 import ru.projektio.backend.database.repository.RefreshTokenDao
 import ru.projektio.backend.database.repository.UserDao
-import ru.projektio.backend.exceptionHandler.exceptions.TokenExpiredException
-import ru.projektio.backend.exceptionHandler.exceptions.InvalidTokenException
 import ru.projektio.backend.exceptionHandler.exceptions.CredentialsMismatchException
+import ru.projektio.backend.exceptionHandler.exceptions.InvalidTokenException
 import ru.projektio.backend.exceptionHandler.exceptions.TableEntityNotFoundException
-import ru.projektio.backend.models.requests.jwtTokenRequests.RefreshTokenRequest
+import ru.projektio.backend.exceptionHandler.exceptions.TokenExpiredException
+import ru.projektio.backend.models.requests.token.RefreshTokenRequest
 import ru.projektio.backend.models.requests.user.AuthUserRequest
-import ru.projektio.backend.models.response.jwtTokenResponse.AuthTokensResponse
+import ru.projektio.backend.models.response.token.AuthTokensResponse
 import ru.projektio.backend.service.AuthService
 import ru.projektio.backend.service.JwtTokenService
 import java.util.*
@@ -42,6 +43,7 @@ class AuthServiceImpl(
      * @throws TableEntityNotFoundException Если пользователь не найден.
      * @throws CredentialsMismatchException Если пароль не совпадает.
      */
+    @Transactional
     override fun authUser(authRequest: AuthUserRequest): AuthTokensResponse {
         val user = userDao.findUserByLogin(authRequest.login) ?: throw TableEntityNotFoundException(
             "User not found"
